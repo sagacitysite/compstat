@@ -1,3 +1,3 @@
-## Computational Statistics in R
+## Computergestützte Statistik mit R
 
 Seminararbeiten
