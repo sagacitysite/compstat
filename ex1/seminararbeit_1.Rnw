@@ -1,0 +1,63 @@
+\documentclass{article}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+
+\section{Part I}
+
+\subsection{}
+
+R knows six different vector types, namely: logical, integer, real, complex, character (string) and raw. To give some examples for every type:
+
+<<>>=
+# define logical object
+log <- TRUE
+is.logical(log)
+
+# define integer object
+int <- 1:5
+is.integer(int)
+
+# define real (numeric double) object
+real <- 2.5
+is.double(real)
+
+# define complex object
+comp <- 1+2i
+is.complex(comp)
+
+# define character (string) object
+char <- "a"
+is.character(char)
+
+# define raw object
+rawd <- as.raw(22) # corresponds to 16
+is.raw(rawd)
+@
+
+\subsection{}
+
+Difference between generic and numeric vector:
+
+\begin{itemize}
+\item An \emph{atomic} vector contains only one single ``atomic'' data type in all entries. An example would be a vector which contains only integers.
+\item A \emph{generic} vector (like a \texttt{list}) can contain different types of data. An example would be a vector which contains characters and numbers.
+\end{itemize}
+
+\subsection{}
+
+To explain: \emph{A data frame is a list, but not evey list is a data frame.}
+
+\begin{itemize}
+\item A \texttt{list} is an object containing collections of objects. The types of the entries inside of the list can be different. It is for example allowed that a \texttt{list} contains a vector of real values (doubles) and a vector of characters. The length of the containing vectors can be \textbf{different}.
+\item A \texttt{data frame} is an object containing colletions of objects. The types of the entries inside of the list can be different. The length of the vectors have to be \textbf{the same}. The \texttt{data frame} has a matrix-like structure.
+\end{itemize}
+
+\texttt{list} and \texttt{data frame} are very similar, but the \texttt{data frame} has one more restriction (same length of all vectors). That's why a \texttt{data frame} is always a list, but a \texttt{list} is not always a \texttt{data frame}.
+
+\section{Part II}
+
+
+
+\end{document}
