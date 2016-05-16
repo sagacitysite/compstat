@@ -1,4 +1,7 @@
 \documentclass{article}
+\usepackage{amsmath}
+
+\setlength{\parindent}{0cm}
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
@@ -57,6 +60,54 @@ To explain: \emph{A data frame is a list, but not evey list is a data frame.}
 \texttt{list} and \texttt{data frame} are very similar, but the \texttt{data frame} has one more restriction (same length of all vectors). That's why a \texttt{data frame} is always a list, but a \texttt{list} is not always a \texttt{data frame}.
 
 \section{Part II}
+
+For random number generation R uses pseudo-random numbers. Starting from an initial state, called \emph{seed state}, it will produce a deterministic sequence, which is used as random numbers. If we choose the same seed in every turn, we get the same results. To make the results of random numbers comparable, we first set the seed in a sepecific state, using \texttt{set.seed}.
+
+<<>>=
+# set seed state to specific state
+set.seed(1)
+@
+
+After setting the seed, we define a vector with (pseudo-) random values. In this case we create $1 \cdot 10^8$ random values following normal distribution. Using the function \texttt{rnorm}, we create a distribution with mean $5$ and standard deviation of $10$ and saving them in a vector called \texttt{largeVector}.
+
+<<>>=
+# define vector with normal random values
+largeVector <- rnorm(1e6, mean=5, sd=10)
+@
+
+The function \texttt{cumsum} calculates the cumulative sum of the values of the vector. It takes all elements one by one and calculates for this element the sum of all elements before, including the current element. These values will be the new elements of the new vector. Consider following example:
+
+$$
+\left(\begin{array}{ccc}1\\ 4\\ 3\end{array}\right) \quad \overset{\texttt{cumsum}}{\xrightarrow{\hspace*{1cm}}} \quad \left(\begin{array}{ccc}1\\ 5\\ 8\end{array}\right)
+$$
+
+In the the first line of the follwing snippet, it first calculates the \texttt{cumsum} of the whole vector \texttt{largeVector}. Afterwards it just takes the first 100 elements and saves them in vector \texttt{a}. In the second line, it first takes the 100 first elements of \texttt{largeVector} and calculates the \texttt{cumsum} afterwards, which is saved in vector \texttt{b}. The second line should be much faster (see below), even if the results is the same (see also below).
+
+<<>>=
+# get cumulative sum of the first 100 elements of largeVector
+a <- cumsum(largeVector)[1:100]
+b <- cumsum(largeVector[1:100])
+@
+
+As mentioned before, the results of vectors \texttt{a} and \texttt{b} should be the same. To check if all elements of the two vectors are exactly equal, we can use the function \texttt{identical}, where the result is \texttt{TRUE}.
+
+<<>>=
+# check if both methods lead to exactly same result
+identical(a,b)
+@
+
+In the next step, we can compare the speed of the two ways to calculate the vectors \texttt{a} and \texttt{b}. To check the elapsed time while calculating we can use the function \texttt{system.time}, which gives us the CPU caluclation time.
+
+<<>>=
+# get CPU calulation time of first method
+system.time(cumsum(largeVector)[1:100])
+# get CPU calulation time of second method
+system.time(cumsum(largeVector[1:100]))
+@
+
+The \emph{user} CPU time and the \emph{system} CPU time is a technical distinction in time running the R code and time used in operating system kernel on behalf of the R code. The interesing time is the \emph{elapsed} time, which is the sum of the \emph{user} time and the \emph{system} time. We can see that the first operation of taking the \texttt{cumsum} of the whole \texttt{largeVector} with $100$ million elements (and reducing the vector to $100$ elements afterwards) takes a lot more CPU calucaltion time than taking the \texttt{cumsum} of the first $100$ elements directly. The second method is much more efficient than the first method, because in the end we are only interested in the \texttt{cumsum} of the first $100$ elements of the vector.
+
+\section{Part III}
 
 
 
