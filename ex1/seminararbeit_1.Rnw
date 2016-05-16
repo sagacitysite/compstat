@@ -70,6 +70,8 @@ set.seed(1)
 
 After setting the seed, we define a vector with (pseudo-) random values. In this case we create $1 \cdot 10^8$ random values following normal distribution. Using the function \texttt{rnorm}, we create a distribution with mean $5$ and standard deviation of $10$ and saving them in a vector called \texttt{largeVector}.
 
+%% TODO: change 1e6 to 1e8
+
 <<>>=
 # define vector with normal random values
 largeVector <- rnorm(1e6, mean=5, sd=10)
@@ -109,6 +111,87 @@ The \emph{user} CPU time and the \emph{system} CPU time is a technical distincti
 
 \section{Part III}
 
+We consider dataset from ``Munchner Mietspiegel 2003'' which contains $13$ variables about $2053$ flats in Munich. In the dataset the logical variables have following encoding: \lq yes\rq\ is $1$ and \lq no\rq\ is $0$. The variables are:
 
+\begin{itemize}
+\item \textbf{nm}: rent in EUR
+\item \textbf{nmqm}: rent per $m^2$ in EUR
+\item \textbf{wfl}: living space in $m^2$
+\item \textbf{rooms}: number of rooms
+\item \textbf{bj}: year of construction
+\item \textbf{bez}: district
+\item \textbf{wohngut}: good residential area (yes/no)
+\item \textbf{wohnbest}: good residential area (yes/no)
+\item \textbf{ww0}: water heating (yes/no)
+\item \textbf{zh0}: central heating (yes/no)
+\item \textbf{badkach0}: tiles in bathroom (yes/no)
+\item \textbf{badextra}: optional extras in bathroom (yes/no)
+\item \textbf{kueche}: luxury kitchen (yes/no)
+\end{itemize}
+
+\subsection{Data import and descriptive statistics}
+
+First we read the data into our environment using \texttt{load} function. We will have a look to the raw data using \texttt{head} and we will get some first descriptive statistic information of the interval scaled variables using \texttt{summary} function.
+
+<<>>=
+load('miete.Rdata')
+head(miete)
+summary(miete$nm)
+summary(miete$nmqm)
+summary(miete$wfl)
+summary(miete$rooms)
+summary(miete$bj)
+@
+
+We get the \texttt{min}, the \texttt{max}, the first quantile, the third quantile, the \texttt{mean} and the \texttt{median}. If we also want to get some extra information like the standard deviation and maybe skew and kurtosis, we can use the \texttt{psych} library and the containing function \texttt{describe}. In this case we include all variables.
+
+<<>>=
+library(psych)
+describe(miete)
+@
+
+With the above results we can also do a quick validation. The \texttt{min} and \texttt{max} of the logical (yes/no) variables should be $0$ and $1$ respectively, which is the case. To get the amount of missing values we can calulcate the \texttt{sum} of \texttt{is.na()}.
+
+<<>>=
+sum(is.na(miete))
+@
+
+There are no missing values in the whole dataset.
+
+%% TODO: More validation? %%
+
+\subsection{Identify relevant regressors and fit regression model}
+
+To idenfity relevant regressors we can apply \texttt{lm()}, which calculates a linear model, to all variables. The first argument of the function is the formular. In our case we want to do a regression of the rent in EUR (\texttt{miete\$nm}) on all other variables (we can use the \texttt{.} to include all variables). In the second argument we set our dataset.
+
+<<>>=
+regrel <- lm(miete$nm ~ ., data = miete)
+@
+
+We can omit all variables which have no significant slope. To get the slope we can have a look to the \texttt{summary} of the result of the linear regression.
+
+<<>>=
+summary(regrel)
+@
+
+We would suggest to include all variables which are significant on a $99\%$ level (* or **). With the relevant variables we can fit the regression.
+
+<<>>=
+summary(lm(miete$nm ~ miete$nmqm + miete$wfl + miete$wohnbest +
+             miete$ww0 + miete$kueche, data = miete))
+@
+
+\subsection{Discussion of model fit and interpretation}
+
+%% TODO
 
 \end{document}
+
+
+
+
+
+
+
+
+
